@@ -1,0 +1,43 @@
+body {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 26px;
+    color: #fff;
+    background-color: #000;
+}
+
+.deck {
+    perspective: 2000px;
+    transform-style: preserve-3d;
+}
+
+.deck .slide {
+    position: absolute;   
+    backface-visibility: hidden;
+    -webkit-transform: rotateY(0deg);
+    -webkit-transform-origin: 50% 50% -640px;
+    transform: rotateY(0deg);
+    transform-origin: 50% 50% -640px;
+    transition: 0.7s ease-in-out;
+
+    background: -webkit-linear-gradient(left top, #0a7084, #00C3DC);
+    background: -moz-linear-gradient(left top, #0a7084, #00C3DC);
+}
+.deck .slide.before {
+    -webkit-transform: rotateY(-90deg);
+    transform: rotateY(-90deg);
+}
+.deck .slide.after {
+    -webkit-transform: rotateY(90deg);
+    transform: rotateY(90deg);
+}
+
+.deck .slide .content {
+    padding: 30px;
+}
+
+.deck .slide .number {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 18px;
+}
