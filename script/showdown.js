@@ -11,7 +11,7 @@
     } else {
         // Browser globals with support for web workers (root is window)
 
-        document.addEventListener("DOMContentLoaded", function() {
+        root.document.addEventListener("DOMContentLoaded", function() {
 
             function getFile(query) {
                 var file = query.substr(1);
@@ -25,35 +25,33 @@
 
             var options = {
                 elementName: "showdown",
-                file: "./README.md"
+                file: "/README.md",
+                slide: 1
             };
 
             if (root.options) {
                 for (var key in root.options) options[key] = root.options[key];
             }
 
-            if (document.location.search) options.file = getFile(document.location.search);
-            else if (document.location.path) options.file = getFile(document.location.path);
+            if (root.document.location.search.length > 1) options.file = getFile(root.document.location.search);
+            else if (root.document.location.pathname.length > 1) options.file = getFile(root.document.location.pathname);
 
-            if (document.location.hash) {
-                options.slide = parseInt(document.location.hash.substr(1));
+            if (root.document.location.hash) {
+                options.slide = parseInt(root.document.location.hash.substr(1));
             }
 
-            var element = document.getElementById(options.elementName);
+            var element = root.document.getElementById(options.elementName);
 
             fetch(options.file)
             .then(response => response.text())
             .then(function(markdown) {
-                var title = factory(element, markdown, options);
-                if (title) document.title = title;
+                var title = factory(root, element, markdown, options.slide);
+                if (title) root.document.title = title;
             });
         });
     }
-}(this, function(element, markdown, options) {
-    options = options || {};
-
-    var slide = options.slide || 1;
-    var title = null;
+}(this, function(context, element, markdown, slide) {
+    slide = slide || 1;
 
     function parseMarkdown() {
         var parsed = [];
@@ -188,7 +186,7 @@
         var slides = [];
 
         for (var i = 0; i < html.length; i++) {
-            var slide = document.createElement("div");
+            var slide = context.document.createElement("div");
             slide.id = "slide-" + i;
             slide.className = "slide after scalerContainer";
             slide.innerHTML = "<div class='scaler'><div class='content'>" + html[i] + "</div></div><div class='number'>" + (i + 1) + "</div>";
@@ -223,13 +221,13 @@
     }
 
     function next() {
-        if (document.body.webkitRequestFullscreen && !document.webkitFullscreenElement) {
-            document.body.webkitRequestFullscreen();
+        if (context.document.body.webkitRequestFullscreen && !context.document.webkitFullscreenElement) {
+            context.document.body.webkitRequestFullscreen();
             return;
         }
 
-        if (document.body.requestFullscreen && !document.webkitFullscreenElement) {
-            document.body.requestFullscreen();
+        if (context.document.body.mozRequestFullScreen && !context.document.mozFullScreenElement) {
+            context.document.body.mozRequestFullScreen();
             return;
         }
 
@@ -237,12 +235,8 @@
         history.pushState({ slide: slide }, null, "#" + slide);
     }
 
-    var parsed = parseMarkdown();
-    var slides = renderSlides(parsed);
-    var elements = document.getElementsByClassName("scaler");
-
-    window.addEventListener("resize", scale);
-    window.addEventListener("keydown", function(e) {
+    context.addEventListener("resize", scale);
+    context.addEventListener("keydown", function(e) {
         if (e.which === 8) prev(); // backspace
         if (e.which === 37) prev(); // left
         if (e.which === 38) prev(); // up
@@ -252,28 +246,36 @@
         if (e.which === 13) next(); // return
         return false;
     });
-    document.onclick = function(e) {
+
+    context.document.onclick = function(e) {
         if (e.target.nodeName.toUpperCase() === "A") return;
         next();
     };
-    window.onpopstate = function(e) {
+
+    var touchX = 0;
+    context.document.addEventListener('touchstart', function(e) {
+        touchX = e.changedTouches[0].screenX;
+    }, false);
+
+    context.document.addEventListener('touchend', function(e) {
+        if (e.changedTouches[0].screenX > touchX) prev();
+        if (e.changedTouches[0].screenX < touchX) next();
+    }, false);
+
+    context.onpopstate = function(e) {
         slide = e.state.slide;
         showSlide(0);
     };
 
-    var touchX = 0;
-    document.addEventListener('touchstart', function(e) {
-        touchX = e.screenX;
-    }, false);
+    var title = null;
+    var parsed = parseMarkdown();
+    var slides = renderSlides(parsed);
+    var elements = context.document.getElementsByClassName("scaler");
 
-    document.addEventListener('touchend', function(e) {
-        if (e.screenX < touchX) prev();
-        if (e.screenX > touchX) next();
-    }, false);
-
-    scale();
-    showSlide(0);
     history.replaceState({ slide: slide }, null, "#" + slide);
+    showSlide(0);
+    scale();
+    setTimeout(scale, 10); // eugh
 
     return title;
 }));
