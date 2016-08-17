@@ -1,6 +1,6 @@
 body {
     font-family: 'Ubuntu', sans-serif;
-    font-size: 26px;
+    font-size: 32px;
     color: #fff;
     background-color: #000;
 }
@@ -14,9 +14,9 @@ body {
     position: absolute;   
     backface-visibility: hidden;
     -webkit-transform: rotateY(0deg);
-    -webkit-transform-origin: 50% 50% -640px;
+    -webkit-transform-origin: 50% 50% -960px;
     transform: rotateY(0deg);
-    transform-origin: 50% 50% -640px;
+    transform-origin: 50% 50% -960px;
     transition: 0.7s ease-in-out;
 
     background: -webkit-linear-gradient(left top, #0a7084, #00C3DC);

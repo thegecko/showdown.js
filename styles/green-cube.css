@@ -1,6 +1,6 @@
 body {
     font-family: 'Ubuntu', sans-serif;
-    font-size: 26px;
+    font-size: 32px;
     color: #fff;
     background-color: #000;
 }
@@ -14,13 +14,13 @@ body {
     position: absolute;   
     backface-visibility: hidden;
     -webkit-transform: rotateX(0deg);
-    -webkit-transform-origin: 50% 50% -360px;
+    -webkit-transform-origin: 50% 50% -540px;
     transform: rotateX(0deg);
-    transform-origin: 50% 50% -360px;
+    transform-origin: 50% 50% -540px;
     transition: 0.7s ease-in-out;
 
-    background: -webkit-linear-gradient(left top, #0a8470, #00DCC3);
-    background: -moz-linear-gradient(left top, #0a8470, #00DCC3);
+    background: -webkit-linear-gradient(left top, #007A08, #52b152);
+    background: -moz-linear-gradient(left top, #007A08, #52b152);
 }
 .deck .slide.before {
     -webkit-transform: rotateX(90deg);
